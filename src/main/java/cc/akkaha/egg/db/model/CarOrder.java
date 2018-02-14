@@ -8,36 +8,44 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
 
-@TableName("egg_order")
-public class Order extends Model<Order> {
+@TableName("egg_car_order")
+public class CarOrder extends Model<CarOrder> {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 自增ID
+     * 自增主键
      */
     @TableId(value="id", type= IdType.AUTO)
     private Integer id;
     /**
-     * 卖家
+     * 车牌号
      */
-    private String seller;
+    private String serial;
+    /**
+     * 司机姓名
+     */
+    private String driver;
+    /**
+     * 司机手机
+     */
+    @TableField("driver_phone")
+    private String driverPhone;
     /**
      * 状态
      */
     private String status;
     /**
-     * 创建者
+     * 备注
      */
-    @TableField("created_by")
-    private String createdBy;
+    private String remark;
     /**
      * 创建时间
      */
     @TableField("created_at")
     private Date createdAt;
     /**
-     * 修改时间
+     * 更新时间
      */
     @TableField("updated_at")
     private Date updatedAt;
@@ -51,12 +59,28 @@ public class Order extends Model<Order> {
         this.id = id;
     }
 
-    public String getSeller() {
-        return seller;
+    public String getSerial() {
+        return serial;
     }
 
-    public void setSeller(String seller) {
-        this.seller = seller;
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getDriverPhone() {
+        return driverPhone;
+    }
+
+    public void setDriverPhone(String driverPhone) {
+        this.driverPhone = driverPhone;
     }
 
     public String getStatus() {
@@ -67,12 +91,12 @@ public class Order extends Model<Order> {
         this.status = status;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Date getCreatedAt() {
@@ -93,11 +117,15 @@ public class Order extends Model<Order> {
 
     public static final String ID = "id";
 
-    public static final String SELLER = "seller";
+    public static final String SERIAL = "serial";
+
+    public static final String DRIVER = "driver";
+
+    public static final String DRIVER_PHONE = "driver_phone";
 
     public static final String STATUS = "status";
 
-    public static final String CREATED_BY = "created_by";
+    public static final String REMARK = "remark";
 
     public static final String CREATED_AT = "created_at";
 

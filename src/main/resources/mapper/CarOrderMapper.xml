@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.akkaha.egg.db.client.OrderMapper">
+<mapper namespace="cc.akkaha.egg.db.client.CarOrderMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cc.akkaha.egg.db.model.Order">
+    <resultMap id="BaseResultMap" type="cc.akkaha.egg.db.model.CarOrder">
         <id column="id" property="id" />
-        <result column="seller" property="seller" />
+        <result column="serial" property="serial" />
+        <result column="driver" property="driver" />
+        <result column="driver_phone" property="driverPhone" />
         <result column="status" property="status" />
-        <result column="created_by" property="createdBy" />
+        <result column="remark" property="remark" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, seller, status, created_by AS createdBy, created_at AS createdAt, updated_at AS updatedAt
+        id, serial, driver, driver_phone AS driverPhone, status, remark, created_at AS createdAt, updated_at AS updatedAt
     </sql>
 
 </mapper>
