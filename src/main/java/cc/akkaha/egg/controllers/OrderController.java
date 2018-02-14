@@ -1,6 +1,6 @@
 package cc.akkaha.egg.controllers;
 
-import cc.akkaha.egg.model.Order;
+import cc.akkaha.egg.db.model.Order;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,6 @@ public class OrderController {
     @PostMapping("/list")
     public Object getList(@RequestBody Map<String, Object> query) {
         Order order = new Order();
-        order.insert();
         return order.selectAll();
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("cc.akkaha.egg.mapper*")
+@MapperScan("cc.akkaha.egg.db.client")
 public class MyBatisPlusConfig {
 
     @Bean

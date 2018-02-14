@@ -55,13 +55,12 @@ public class MpGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        // strategy.setTablePrefix(new String[]{""});
+        strategy.setTablePrefix(new String[]{"egg_"});
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         strategy.setEntityColumnConstant(true);
         strategy.setRestControllerStyle(true);
-        // strategy.setInclude(new String[]{"p_jira_opt_log"});
-        // strategy.setExclude(new String[]{"p_authority","p_platform","p_platform_group",
-        // "p_promise","p_role","p_user"});
+        // strategy.setInclude(new String[]{""});
+        // strategy.setExclude(new String[]{""});
         mpg.setStrategy(strategy);
 
         // 包配置
@@ -70,9 +69,9 @@ public class MpGenerator {
         pc.setModuleName("egg");
         pc.setMapper("db.client");
         pc.setEntity("db.model");
-        //pc.setService("service");
-        //pc.setServiceImpl("service.impl");
-        pc.setXml("db.mybatis.client");
+        pc.setService("db.service");
+        pc.setServiceImpl("db.service.impl");
+        pc.setXml("db.mapper");
         //pc.setController("controller");
 
         mpg.setPackageInfo(pc);
@@ -96,27 +95,27 @@ public class MpGenerator {
         focList.add(new FileOutConfig("/templates/mapper.xml.vm") {
             @Override
             public String outputFile(TableInfo tableInfo) {
-                return getRootPath() + "/src/main/resources/Mapper/" + tableInfo.getEntityName()
+                return getRootPath() + "/src/main/resources/mapper/" + tableInfo.getEntityName()
                         + "Mapper.xml";
             }
         });
 
-//        // 调整 Service 生成
-//        focList.add(new FileOutConfig("/templates/service.vm") {
-//            @Override
-//            public String outputFile(TableInfo tableInfo) {
-//                return getRootPath() + "/src/main/java/com/guazi/qa/casemgr/service/" +
-//                        tableInfo.getEntityName().substring(1) + "Service.java";
-//            }
-//        });
-//        // 调整 ServiceImpl 生成
-//        focList.add(new FileOutConfig("/templates/serviceImpl.vm") {
-//            @Override
-//            public String outputFile(TableInfo tableInfo) {
-//                return getRootPath() + "/src/main/java/com/guazi/qa/casemgr/service/impl/" +
-//                        tableInfo.getEntityName().substring(1) + "ServiceImpl.java";
-//            }
-//        });
+        // 调整 Service 生成
+        focList.add(new FileOutConfig("/templates/service.java.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                return getRootPath() + "/src/main/java/cc/akkaha/egg/db/service/" +
+                        tableInfo.getEntityName() + "Service.java";
+            }
+        });
+        // 调整 ServiceImpl 生成
+        focList.add(new FileOutConfig("/templates/serviceImpl.java.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                return getRootPath() + "/src/main/java/cc/akkaha/egg/db/service/impl/" +
+                        tableInfo.getEntityName() + "ServiceImpl.java";
+            }
+        });
 
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
@@ -125,8 +124,8 @@ public class MpGenerator {
         TemplateConfig tc = new TemplateConfig();
         tc.setXml(null);
         tc.setController(null);
-        //tc.setService(null);
-        //tc.setServiceImpl(null);
+        // tc.setService(null);
+        // tc.setServiceImpl(null);
         mpg.setTemplate(tc);
 
         // 执行生成
