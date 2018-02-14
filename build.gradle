@@ -29,6 +29,7 @@ repositories {
 
 
 dependencies {
+    compile('org.springframework.boot:spring-boot-starter-logging')
     compile('org.springframework.boot:spring-boot-starter-aop')
     compile('org.springframework.boot:spring-boot-starter-jdbc')
     compile group: 'com.baomidou', name: 'mybatisplus-spring-boot-starter', version: '1.0.5'
@@ -37,7 +38,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-webflux')
     compile('org.springframework.boot:spring-boot-starter-websocket')
-    compile('org.springframework.data:spring-data-rest-hal-browser')
+    // compile('org.springframework.data:spring-data-rest-hal-browser')
     compile('org.springframework.session:spring-session-core')
     runtime('org.springframework.boot:spring-boot-devtools')
     runtime('mysql:mysql-connector-java')

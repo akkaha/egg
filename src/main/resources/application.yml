@@ -1,6 +1,7 @@
 server:
   port: 8080
   address: 0.0.0.0
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/egg
@@ -37,5 +38,8 @@ mybatis-plus:
     jdbc-type-for-null: 'null'
 
 logging:
+  file: egg.log
+  path: ./logs
+  max-history: 15
   level:
     cc.akkaha.egg.db.client: debug
