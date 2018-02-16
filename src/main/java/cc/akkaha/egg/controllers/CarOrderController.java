@@ -1,7 +1,7 @@
 package cc.akkaha.egg.controllers;
 
 import cc.akkaha.egg.constants.OrderStatus;
-import cc.akkaha.egg.db.model.UserOrder;
+import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.model.ApiRes;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -13,32 +13,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/egg/user-order")
-public class UserOrderController {
+@RequestMapping("/egg/car-order")
+public class CarOrderController {
 
     @PostMapping("/query")
-    public Object query(@RequestBody QueryUserOrder query) {
+    public Object query(@RequestBody QueryCarOrder query) {
         ApiRes res = new ApiRes();
-        UserOrder order = new UserOrder();
-        Wrapper wrapper = new EntityWrapper<UserOrder>();
-        if (StringUtils.isNotEmpty(query.getSeller())) {
-            wrapper.eq(UserOrder.SELLER, query.getSeller());
+        CarOrder order = new CarOrder();
+        Wrapper wrapper = new EntityWrapper<CarOrder>();
+        if (StringUtils.isNotEmpty(query.getSerial())) {
+            wrapper.eq(CarOrder.SERIAL, query.getSerial());
         }
-        if (StringUtils.isNotEmpty(query.getPhone())) {
-            wrapper.eq(UserOrder.PHONE, query.getPhone());
+        if (StringUtils.isNotEmpty(query.getDriver())) {
+            wrapper.eq(CarOrder.DRIVER, query.getDriver());
+        }
+        if (StringUtils.isNotEmpty(query.getDriverPhone())) {
+            wrapper.eq(CarOrder.DRIVER_PHONE, query.getDriverPhone());
         }
         if (StringUtils.isNotEmpty(query.getStatus())) {
-            wrapper.eq(UserOrder.STATUS, query.getStatus());
+            wrapper.eq(CarOrder.STATUS, query.getStatus());
         }
-        Page page = order.selectPage(new Page<UserOrder>(query.getCurrent(), query.getSize(),
-                        UserOrder.CREATED_AT, false),
+        Page page = order.selectPage(new Page<CarOrder>(query.getCurrent(), query.getSize(),
+                        CarOrder.CREATED_AT, false),
                 wrapper);
         res.setData(page);
         return res;
     }
 
     @PostMapping("/insert")
-    public Object insert(@RequestBody UserOrder order) {
+    public Object insert(@RequestBody CarOrder order) {
         ApiRes res = new ApiRes();
         order.setStatus(OrderStatus.STATUS_NEW);
         boolean ret = order.insert();
@@ -51,7 +54,7 @@ public class UserOrderController {
     }
 
     @PostMapping("/update")
-    public Object update(@RequestBody UserOrder order) {
+    public Object update(@RequestBody CarOrder order) {
         ApiRes res = new ApiRes();
         boolean ret = order.updateById();
         if (ret) {
@@ -63,7 +66,7 @@ public class UserOrderController {
     }
 
     @PostMapping("/delete")
-    public Object delete(@RequestBody UserOrder order) {
+    public Object delete(@RequestBody CarOrder order) {
         ApiRes res = new ApiRes();
         boolean ret = order.deleteById();
         if (ret) {
@@ -75,7 +78,7 @@ public class UserOrderController {
     }
 }
 
-class QueryUserOrder extends UserOrder {
+class QueryCarOrder extends CarOrder {
 
     private Integer current = 1;
     private Integer size = 10;
