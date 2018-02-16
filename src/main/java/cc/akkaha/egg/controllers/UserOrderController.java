@@ -1,16 +1,17 @@
 package cc.akkaha.egg.controllers;
 
 import cc.akkaha.egg.constants.OrderStatus;
+import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
 import cc.akkaha.egg.model.ApiRes;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/egg/user-order")
@@ -71,6 +72,23 @@ public class UserOrderController {
         } else {
             res.setMsg("操作失败!");
         }
+        return res;
+    }
+
+    @GetMapping("/detail/{id}")
+    public Object detail(@PathVariable("id") String id) {
+        ApiRes res = new ApiRes();
+        UserOrder userOrder = new UserOrder();
+        userOrder.setId(Integer.parseInt(id));
+        UserOrder order = userOrder.selectById();
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("order", order);
+        OrderItem orderItem = new OrderItem();
+        EntityWrapper<OrderItem> wrapper = new EntityWrapper<>();
+        wrapper.eq(OrderItem.USER, id).orderBy(OrderItem.CREATED_AT, true);
+        List items = orderItem.selectList(wrapper);
+        data.put("items", items);
+        res.setData(data);
         return res;
     }
 }
