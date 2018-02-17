@@ -1,6 +1,7 @@
 package cc.akkaha.egg.controllers;
 
 import cc.akkaha.egg.constants.OrderStatus;
+import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
 import cc.akkaha.egg.model.ApiRes;
@@ -88,6 +89,11 @@ public class UserOrderController {
         wrapper.eq(OrderItem.USER, id).orderBy(OrderItem.CREATED_AT, true);
         List items = orderItem.selectList(wrapper);
         data.put("items", items);
+        if (null != order.getCar()) {
+            CarOrder carOrder = new CarOrder();
+            carOrder.setId(order.getCar());
+            data.put("car", carOrder.selectById());
+        }
         res.setData(data);
         return res;
     }

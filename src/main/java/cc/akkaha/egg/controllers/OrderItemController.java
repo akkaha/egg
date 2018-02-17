@@ -66,7 +66,10 @@ public class OrderItemController {
     @PostMapping("/update")
     public Object update(@RequestBody OrderItem item) {
         ApiRes res = new ApiRes();
-        boolean ret = item.updateById();
+        Wrapper wrapper = new EntityWrapper<OrderItem>();
+        wrapper.setSqlSelect(OrderItem.USER, OrderItem.CAR, OrderItem.WEIGHT).eq(OrderItem.ID,
+                item.getId());
+        boolean ret = item.update(wrapper);
         if (ret) {
             res.setData(item);
         } else {

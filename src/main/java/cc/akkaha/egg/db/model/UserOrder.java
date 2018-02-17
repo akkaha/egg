@@ -27,6 +27,10 @@ public class UserOrder extends Model<UserOrder> {
      */
     private String phone;
     /**
+     * 默认车次,可无
+     */
+    private Integer car;
+    /**
      * 状态: new,
      */
     private String status;
@@ -70,6 +74,14 @@ public class UserOrder extends Model<UserOrder> {
         this.phone = phone;
     }
 
+    public Integer getCar() {
+        return car;
+    }
+
+    public void setCar(Integer car) {
+        this.car = car;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -107,6 +119,8 @@ public class UserOrder extends Model<UserOrder> {
     public static final String SELLER = "seller";
 
     public static final String PHONE = "phone";
+
+    public static final String CAR = "car";
 
     public static final String STATUS = "status";
 
