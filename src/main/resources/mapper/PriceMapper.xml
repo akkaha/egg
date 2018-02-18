@@ -8,11 +8,12 @@
         <result column="day" property="day" />
         <result column="weight" property="weight" />
         <result column="price" property="price" />
+        <result column="created_at" property="createdAt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, day, weight, price
+        id, day, weight, price, created_at AS createdAt
     </sql>
 
 </mapper>

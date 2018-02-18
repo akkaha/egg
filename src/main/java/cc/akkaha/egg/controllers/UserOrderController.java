@@ -5,11 +5,15 @@ import cc.akkaha.egg.controllers.model.QueryUserOrder;
 import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
+import cc.akkaha.egg.db.service.UserOrderService;
 import cc.akkaha.egg.model.ApiRes;
+import cc.akkaha.egg.service.BillService;
+import cc.akkaha.egg.util.DateUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,10 +23,14 @@ import java.util.List;
 @RequestMapping("/egg/user-order")
 public class UserOrderController {
 
+    @Autowired
+    private UserOrderService userOrderService;
+    @Autowired
+    private BillService billService;
+
     @PostMapping("/query")
     public Object query(@RequestBody QueryUserOrder query) {
         ApiRes res = new ApiRes();
-        UserOrder order = new UserOrder();
         Wrapper wrapper = new EntityWrapper<UserOrder>();
         if (StringUtils.isNotEmpty(query.getSeller())) {
             wrapper.eq(UserOrder.SELLER, query.getSeller());
@@ -33,7 +41,8 @@ public class UserOrderController {
         if (StringUtils.isNotEmpty(query.getStatus())) {
             wrapper.eq(UserOrder.STATUS, query.getStatus());
         }
-        Page page = order.selectPage(new Page<UserOrder>(query.getCurrent(), query.getSize(),
+        Page page = userOrderService.selectPage(new Page<UserOrder>(query.getCurrent(), query
+                        .getSize(),
                         UserOrder.CREATED_AT, false),
                 wrapper);
         res.setData(page);
@@ -80,9 +89,7 @@ public class UserOrderController {
     @GetMapping("/detail/{id}")
     public Object detail(@PathVariable("id") String id) {
         ApiRes res = new ApiRes();
-        UserOrder userOrder = new UserOrder();
-        userOrder.setId(Integer.parseInt(id));
-        UserOrder order = userOrder.selectById();
+        UserOrder order = userOrderService.selectById(id);
         HashMap<String, Object> data = new HashMap<>();
         data.put("order", order);
         OrderItem orderItem = new OrderItem();
@@ -95,6 +102,26 @@ public class UserOrderController {
             carOrder.setId(order.getCar());
             data.put("car", carOrder.selectById());
         }
+        res.setData(data);
+        return res;
+    }
+
+    @GetMapping("/pay/{id}")
+    public Object pay(@PathVariable("id") String id,
+                      @RequestParam(value = "date", required = false) String date) {
+        ApiRes res = new ApiRes();
+        UserOrder order = userOrderService.selectById(id);
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("order", order);
+        if (null != order.getCar()) {
+            CarOrder carOrder = new CarOrder();
+            carOrder.setId(order.getCar());
+            data.put("car", carOrder.selectById());
+        }
+        if (StringUtils.isEmpty(date)) {
+            date = DateUtils.currentDate();
+        }
+        data.put("bill", billService.payUserOrder(order.getId(), date));
         res.setData(data);
         return res;
     }

@@ -1,14 +1,16 @@
 
-# Dump of table egg_user_order
-# ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `egg_car_order`;
 DROP TABLE IF EXISTS `egg_user_order`;
+DROP TABLE IF EXISTS `egg_order_item`;
+DROP TABLE IF EXISTS `egg_price`;
 
 CREATE TABLE `egg_user_order` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `seller` varchar(64) NOT NULL DEFAULT '' COMMENT '卖家',
   `phone` varchar(16) NOT NULL DEFAULT '' COMMENT '手机号',
   `car` int(11) DEFAULT NULL COMMENT '默认车次,可无',
+  `bill` text COMMENT '账单',
   `status` varchar(16) NOT NULL DEFAULT '1' COMMENT '状态: new,',
   `remark` text COMMENT '备注',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -19,13 +21,6 @@ CREATE TABLE `egg_user_order` (
   KEY `idx_phone` (`phone`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户单信息';
-
-
-
-# Dump of table egg_car_order
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `egg_car_order`;
 
 CREATE TABLE `egg_car_order` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
@@ -45,17 +40,11 @@ CREATE TABLE `egg_car_order` (
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='车单信息';
 
-# Dump of table egg_order_item
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `egg_order_item`;
-
 CREATE TABLE `egg_order_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `weight` decimal(5,1) NOT NULL COMMENT '重量,单位斤',
   `user` int(11) DEFAULT NULL COMMENT '订单外键',
   `car` int(11) DEFAULT NULL COMMENT '车次外键',
-  `bill` text COMMENT '账单',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
@@ -66,18 +55,12 @@ CREATE TABLE `egg_order_item` (
   CONSTRAINT `fk_user` FOREIGN KEY (`user`) REFERENCES `egg_user_order` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='单子每箱';
 
-
-
-# Dump of table egg_price
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `egg_price`;
-
 CREATE TABLE `egg_price` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `day` varchar(10) NOT NULL DEFAULT '' COMMENT '日期:天 yyyy-MM-dd',
-  `weight` int(11) NOT NULL COMMENT '斤',
+  `weight` decimal(11,1) NOT NULL COMMENT '斤',
   `price` decimal(11,1) NOT NULL COMMENT '价格',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_day_weight` (`day`,`weight`),
   KEY `idx_day` (`day`),
