@@ -8,6 +8,7 @@
         <result column="serial" property="serial" />
         <result column="driver" property="driver" />
         <result column="driver_phone" property="driverPhone" />
+        <result column="bill" property="bill" />
         <result column="status" property="status" />
         <result column="remark" property="remark" />
         <result column="created_at" property="createdAt" />
@@ -16,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, serial, driver, driver_phone AS driverPhone, status, remark, created_at AS createdAt, updated_at AS updatedAt
+        id, serial, driver, driver_phone AS driverPhone, bill, status, remark, created_at AS createdAt, updated_at AS updatedAt
     </sql>
 
 </mapper>

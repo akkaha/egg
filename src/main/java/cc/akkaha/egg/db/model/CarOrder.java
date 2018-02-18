@@ -32,6 +32,10 @@ public class CarOrder extends Model<CarOrder> {
     @TableField("driver_phone")
     private String driverPhone;
     /**
+     * 账单
+     */
+    private String bill;
+    /**
      * 状态
      */
     private String status;
@@ -83,6 +87,14 @@ public class CarOrder extends Model<CarOrder> {
         this.driverPhone = driverPhone;
     }
 
+    public String getBill() {
+        return bill;
+    }
+
+    public void setBill(String bill) {
+        this.bill = bill;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -122,6 +134,8 @@ public class CarOrder extends Model<CarOrder> {
     public static final String DRIVER = "driver";
 
     public static final String DRIVER_PHONE = "driver_phone";
+
+    public static final String BILL = "bill";
 
     public static final String STATUS = "status";
 

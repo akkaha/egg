@@ -1,0 +1,79 @@
+package cc.akkaha.egg.db.model;
+
+import com.baomidou.mybatisplus.enums.IdType;
+import java.math.BigDecimal;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableName;
+import java.io.Serializable;
+
+@TableName("egg_price")
+public class Price extends Model<Price> {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 自增主键
+     */
+    @TableId(value="id", type= IdType.AUTO)
+    private Integer id;
+    /**
+     * 日期:天 yyyy-MM-dd
+     */
+    private String day;
+    /**
+     * 斤
+     */
+    private Integer weight;
+    /**
+     * 价格
+     */
+    private BigDecimal price;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public static final String ID = "id";
+
+    public static final String DAY = "day";
+
+    public static final String WEIGHT = "weight";
+
+    public static final String PRICE = "price";
+
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
+
+}
