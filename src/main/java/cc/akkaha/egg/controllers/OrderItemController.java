@@ -4,25 +4,30 @@ import cc.akkaha.egg.controllers.model.NewOrderItem;
 import cc.akkaha.egg.controllers.model.QueryOrderItem;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
+import cc.akkaha.egg.db.service.OrderItemService;
 import cc.akkaha.egg.model.ApiRes;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/egg/order-item")
 public class OrderItemController {
 
+    @Autowired
+    private OrderItemService itemService;
+
     @PostMapping("/query")
     public Object query(@RequestBody QueryOrderItem query) {
         ApiRes res = new ApiRes();
-        OrderItem order = new OrderItem();
         Wrapper wrapper = new EntityWrapper<OrderItem>();
         if (null != query.getUser()) {
             wrapper.eq(OrderItem.USER, query.getUser());
@@ -30,7 +35,7 @@ public class OrderItemController {
         if (null != query.getCar()) {
             wrapper.eq(OrderItem.CAR, query.getCar());
         }
-        Page page = order.selectPage(new Page<OrderItem>(query.getCurrent(), query.getSize(),
+        Page page = itemService.selectPage(new Page<OrderItem>(query.getCurrent(), query.getSize(),
                         UserOrder.CREATED_AT, false),
                 wrapper);
         res.setData(page);
@@ -68,12 +73,15 @@ public class OrderItemController {
     @PostMapping("/update")
     public Object update(@RequestBody OrderItem item) {
         ApiRes res = new ApiRes();
-        Wrapper wrapper = new EntityWrapper<OrderItem>();
-        wrapper.setSqlSelect(OrderItem.USER, OrderItem.CAR, OrderItem.WEIGHT).eq(OrderItem.ID,
-                item.getId());
-        boolean ret = item.update(wrapper);
+        // ugly but lazy, no easy function
+        OrderItem dbItem = item.selectById();
+        dbItem.setUser(item.getUser());
+        dbItem.setWeight(item.getWeight());
+        dbItem.setCar(item.getCar());
+        dbItem.setUpdatedAt(new Date());
+        boolean ret = dbItem.updateAllColumnById();
         if (ret) {
-            res.setData(item);
+            res.setData(dbItem);
         } else {
             res.setMsg("更新失败!");
         }
