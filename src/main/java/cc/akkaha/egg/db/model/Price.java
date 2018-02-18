@@ -24,7 +24,7 @@ public class Price extends Model<Price> {
     /**
      * 斤
      */
-    private Integer weight;
+    private BigDecimal weight;
     /**
      * 价格
      */
@@ -47,11 +47,11 @@ public class Price extends Model<Price> {
         this.day = day;
     }
 
-    public Integer getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(BigDecimal weight) {
         this.weight = weight;
     }
 

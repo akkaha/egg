@@ -1,6 +1,7 @@
 package cc.akkaha.egg.controllers;
 
 import cc.akkaha.egg.constants.OrderStatus;
+import cc.akkaha.egg.controllers.model.QueryUserOrder;
 import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
@@ -96,27 +97,5 @@ public class UserOrderController {
         }
         res.setData(data);
         return res;
-    }
-}
-
-class QueryUserOrder extends UserOrder {
-
-    private Integer current = 1;
-    private Integer size = 10;
-
-    public Integer getCurrent() {
-        if (null == this.current) {
-            return 10;
-        } else {
-            return this.current;
-        }
-    }
-
-    public Integer getSize() {
-        if (null == this.size) {
-            return 10;
-        } else {
-            return this.size;
-        }
     }
 }

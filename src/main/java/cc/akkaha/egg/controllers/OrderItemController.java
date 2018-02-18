@@ -1,5 +1,7 @@
 package cc.akkaha.egg.controllers;
 
+import cc.akkaha.egg.controllers.model.NewOrderItem;
+import cc.akkaha.egg.controllers.model.QueryOrderItem;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
 import cc.akkaha.egg.model.ApiRes;
@@ -76,58 +78,5 @@ public class OrderItemController {
             res.setMsg("更新失败!");
         }
         return res;
-    }
-}
-
-class NewOrderItem {
-
-    private String weight;
-    private Integer user;
-    private Integer car;
-
-    public String getWeight() {
-        return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
-
-    public Integer getUser() {
-        return user;
-    }
-
-    public void setUser(Integer user) {
-        this.user = user;
-    }
-
-    public Integer getCar() {
-        return car;
-    }
-
-    public void setCar(Integer car) {
-        this.car = car;
-    }
-}
-
-class QueryOrderItem extends OrderItem {
-
-    private Integer current = 1;
-    private Integer size = 10;
-
-    public Integer getCurrent() {
-        if (null == this.current) {
-            return 10;
-        } else {
-            return this.current;
-        }
-    }
-
-    public Integer getSize() {
-        if (null == this.size) {
-            return 10;
-        } else {
-            return this.size;
-        }
     }
 }
