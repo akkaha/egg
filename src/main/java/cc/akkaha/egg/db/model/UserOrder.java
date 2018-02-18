@@ -31,6 +31,10 @@ public class UserOrder extends Model<UserOrder> {
      */
     private Integer car;
     /**
+     * 账单
+     */
+    private String bill;
+    /**
      * 状态: new,
      */
     private String status;
@@ -82,6 +86,14 @@ public class UserOrder extends Model<UserOrder> {
         this.car = car;
     }
 
+    public String getBill() {
+        return bill;
+    }
+
+    public void setBill(String bill) {
+        this.bill = bill;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -121,6 +133,8 @@ public class UserOrder extends Model<UserOrder> {
     public static final String PHONE = "phone";
 
     public static final String CAR = "car";
+
+    public static final String BILL = "bill";
 
     public static final String STATUS = "status";
 

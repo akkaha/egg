@@ -8,6 +8,7 @@
         <result column="seller" property="seller" />
         <result column="phone" property="phone" />
         <result column="car" property="car" />
+        <result column="bill" property="bill" />
         <result column="status" property="status" />
         <result column="remark" property="remark" />
         <result column="created_at" property="createdAt" />
@@ -16,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, seller, phone, car, status, remark, created_at AS createdAt, updated_at AS updatedAt
+        id, seller, phone, car, bill, status, remark, created_at AS createdAt, updated_at AS updatedAt
     </sql>
 
 </mapper>

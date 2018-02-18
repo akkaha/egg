@@ -32,10 +32,6 @@ public class OrderItem extends Model<OrderItem> {
      */
     private Integer car;
     /**
-     * 账单
-     */
-    private String bill;
-    /**
      * 创建时间
      */
     @TableField("created_at")
@@ -79,14 +75,6 @@ public class OrderItem extends Model<OrderItem> {
         this.car = car;
     }
 
-    public String getBill() {
-        return bill;
-    }
-
-    public void setBill(String bill) {
-        this.bill = bill;
-    }
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -110,8 +98,6 @@ public class OrderItem extends Model<OrderItem> {
     public static final String USER = "user";
 
     public static final String CAR = "car";
-
-    public static final String BILL = "bill";
 
     public static final String CREATED_AT = "created_at";
 
