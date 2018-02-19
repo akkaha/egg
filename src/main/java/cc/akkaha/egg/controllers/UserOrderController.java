@@ -126,7 +126,9 @@ public class UserOrderController {
             if (StringUtils.isEmpty(date)) {
                 date = DateUtils.currentDate();
             }
-            data.put("bill", billService.payUserOrder(order.getId(), date));
+            OrderBill orderBill = billService.payUserOrder(order.getId(), date);
+            data.put("bill", orderBill);
+            data.put("priceExtra", orderBill.getInner().priceExtra);
         }
         res.setData(data);
         return res;

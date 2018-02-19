@@ -1,6 +1,7 @@
 package cc.akkaha.egg.model;
 
 import cc.akkaha.egg.db.model.OrderItem;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -17,15 +18,26 @@ public class OrderBill {
     private String meanWeight;
     private String totalPrice;
     private String meanPrice;
+    private PriceExtra priceExtra;
     private List<BillItem> items = new ArrayList<>();
     private TreeMap<String, String> priceRange = new TreeMap<>();
     private String remark = StringUtils.EMPTY;
 
-    public static OrderBill parse(String date, List<OrderItem> items, TreeMap<BigDecimal,
-            BigDecimal> priceRange) {
+    @JsonIgnore
+    private OrderBillInner inner = new OrderBillInner();
+
+    // TODO price extra weight adjust
+    public static OrderBill parse(String date, List<OrderItem> orderItems,
+                                  TreeMap<BigDecimal, BigDecimal> priceRange,
+                                  cc.akkaha.egg.db.model.PriceExtra priceExtra) {
         OrderBill bill = new OrderBill();
+        bill.getInner().priceExtra = priceExtra;
+        if (null != priceExtra) {
+            bill.setPriceExtra(new PriceExtra(
+                    priceExtra.getWeightAdjust().stripTrailingZeros().toPlainString()));
+        }
         bill.setDate(date);
-        bill.setTotalCount(items.size());
+        bill.setTotalCount(orderItems.size());
         if (null != priceRange) {
             TreeMap<String, String> billPriceRange = bill.getPriceRange();
             priceRange.forEach((k, v) ->
@@ -37,7 +49,7 @@ public class OrderBill {
         }
         BigDecimal totalWeight = BigDecimal.ZERO;
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (OrderItem item : items) {
+        for (OrderItem item : orderItems) {
             BigDecimal itemWeight = item.getWeight();
             totalWeight = totalWeight.add(itemWeight);
             BigDecimal itemPrice = calcItemPrice(itemWeight, priceRange);
@@ -53,7 +65,7 @@ public class OrderBill {
         }
         bill.setTotalWeight(totalWeight.stripTrailingZeros().toPlainString());
         bill.setTotalPrice(totalPrice.stripTrailingZeros().toPlainString());
-        if (items.isEmpty()) {
+        if (orderItems.isEmpty()) {
             bill.setMeanWeight(BigDecimal.ZERO.stripTrailingZeros().toPlainString());
             bill.setMeanPrice(BigDecimal.ZERO.stripTrailingZeros().toPlainString());
         } else {
@@ -168,5 +180,21 @@ public class OrderBill {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public PriceExtra getPriceExtra() {
+        return priceExtra;
+    }
+
+    public void setPriceExtra(PriceExtra priceExtra) {
+        this.priceExtra = priceExtra;
+    }
+
+    public OrderBillInner getInner() {
+        return inner;
+    }
+
+    public void setInner(OrderBillInner inner) {
+        this.inner = inner;
     }
 }

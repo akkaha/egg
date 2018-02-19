@@ -26,8 +26,8 @@ public class PriceExtra extends Model<PriceExtra> {
     /**
      * 箱重
      */
-    @TableField("box_weight")
-    private BigDecimal boxWeight;
+    @TableField("weight_adjust")
+    private BigDecimal weightAdjust;
     /**
      * 创建时间
      */
@@ -51,12 +51,12 @@ public class PriceExtra extends Model<PriceExtra> {
         this.day = day;
     }
 
-    public BigDecimal getBoxWeight() {
-        return boxWeight;
+    public BigDecimal getWeightAdjust() {
+        return weightAdjust;
     }
 
-    public void setBoxWeight(BigDecimal boxWeight) {
-        this.boxWeight = boxWeight;
+    public void setWeightAdjust(BigDecimal weightAdjust) {
+        this.weightAdjust = weightAdjust;
     }
 
     public Date getCreatedAt() {
@@ -71,7 +71,7 @@ public class PriceExtra extends Model<PriceExtra> {
 
     public static final String DAY = "day";
 
-    public static final String BOX_WEIGHT = "box_weight";
+    public static final String WEIGHT_ADJUST = "weight_adjust";
 
     public static final String CREATED_AT = "created_at";
 

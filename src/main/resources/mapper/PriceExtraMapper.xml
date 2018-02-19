@@ -6,13 +6,13 @@
     <resultMap id="BaseResultMap" type="cc.akkaha.egg.db.model.PriceExtra">
         <id column="id" property="id" />
         <result column="day" property="day" />
-        <result column="box_weight" property="boxWeight" />
+        <result column="weight_adjust" property="weightAdjust" />
         <result column="created_at" property="createdAt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, day, box_weight AS boxWeight, created_at AS createdAt
+        id, day, weight_adjust AS weightAdjust, created_at AS createdAt
     </sql>
 
 </mapper>

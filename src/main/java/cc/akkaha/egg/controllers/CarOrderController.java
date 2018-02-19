@@ -118,7 +118,9 @@ public class CarOrderController {
             if (StringUtils.isEmpty(date)) {
                 date = DateUtils.currentDate();
             }
-            data.put("bill", billService.payCarOrder(order.getId(), date));
+            OrderBill orderBill = billService.payCarOrder(order.getId(), date);
+            data.put("bill", orderBill);
+            data.put("priceExtra", orderBill.getInner().priceExtra);
         }
         res.setData(data);
         return res;
