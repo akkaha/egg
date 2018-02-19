@@ -7,8 +7,10 @@ import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
 import cc.akkaha.egg.db.service.UserOrderService;
 import cc.akkaha.egg.model.ApiRes;
+import cc.akkaha.egg.model.OrderBill;
 import cc.akkaha.egg.service.BillService;
 import cc.akkaha.egg.util.DateUtils;
+import cc.akkaha.egg.util.JsonUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -118,10 +120,14 @@ public class UserOrderController {
             carOrder.setId(order.getCar());
             data.put("car", carOrder.selectById());
         }
-        if (StringUtils.isEmpty(date)) {
-            date = DateUtils.currentDate();
+        if (OrderStatus.STATUS_FINISHED.equals(order.getStatus())) {
+            data.put("bill", JsonUtils.parse(order.getBill(), OrderBill.class));
+        } else {
+            if (StringUtils.isEmpty(date)) {
+                date = DateUtils.currentDate();
+            }
+            data.put("bill", billService.payUserOrder(order.getId(), date));
         }
-        data.put("bill", billService.payUserOrder(order.getId(), date));
         res.setData(data);
         return res;
     }
