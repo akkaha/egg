@@ -26,7 +26,6 @@ public class OrderBill {
     @JsonIgnore
     private OrderBillInner inner = new OrderBillInner();
 
-    // TODO price extra weight adjust
     public static OrderBill parse(String date, List<OrderItem> orderItems,
                                   TreeMap<BigDecimal, BigDecimal> priceRange,
                                   cc.akkaha.egg.db.model.PriceExtra priceExtra) {
@@ -52,15 +51,22 @@ public class OrderBill {
         for (OrderItem item : orderItems) {
             BigDecimal itemWeight = item.getWeight();
             totalWeight = totalWeight.add(itemWeight);
-            BigDecimal itemPrice = calcItemPrice(itemWeight, priceRange);
+            BigDecimal itemPrice = calcItemPrice(itemWeight, priceRange, priceExtra);
             if (null != itemPrice) {
-                bill.items.add(new BillItem(itemWeight.stripTrailingZeros().toPlainString(),
+                bill.items.add(new BillItem(
+                        itemWeight.stripTrailingZeros().toPlainString(),
                         itemPrice.stripTrailingZeros().toPlainString(),
-                        item.getUser(), item.getCar()));
+                        item.getUser(),
+                        item.getCar()
+                ));
                 totalPrice = totalPrice.add(itemPrice);
             } else {
-                bill.items.add(new BillItem(itemWeight.stripTrailingZeros().toPlainString(),
-                        StringUtils.EMPTY, item.getUser(), item.getCar()));
+                bill.items.add(new BillItem(
+                        itemWeight.stripTrailingZeros().toPlainString(),
+                        StringUtils.EMPTY,
+                        item.getUser(),
+                        item.getCar()
+                ));
             }
         }
         bill.setTotalWeight(totalWeight.stripTrailingZeros().toPlainString());
@@ -80,13 +86,21 @@ public class OrderBill {
 
     /**
      * Pl: floor price, Pc: ceiling price, Wf: floor weight, Wc: ceiling weight, Wn: current weight
-     * Pl + (Pc - Pl) / (Wc - Wl) * (Wn - Wf)
+     * Pl + (Pc - Pl) / (Wc - Wl) * (Wn + Wa - Wf)
      */
-    public static BigDecimal calcItemPrice(BigDecimal weight, TreeMap<BigDecimal, BigDecimal>
-            priceRange) {
+    public static BigDecimal calcItemPrice(
+            BigDecimal weight,
+            TreeMap<BigDecimal, BigDecimal> priceRange,
+            cc.akkaha.egg.db.model.PriceExtra priceExtra
+    ) {
         if (null != priceRange) {
-            Map.Entry<BigDecimal, BigDecimal> ceilingEntry = priceRange.ceilingEntry(weight);
-            Map.Entry<BigDecimal, BigDecimal> floorEntry = priceRange.floorEntry(weight);
+            BigDecimal adjustedWeight = weight;
+            if (null != priceExtra && null != priceExtra.getWeightAdjust()) {
+                adjustedWeight = weight.add(priceExtra.getWeightAdjust());
+            }
+            Map.Entry<BigDecimal, BigDecimal> ceilingEntry = priceRange.ceilingEntry
+                    (adjustedWeight);
+            Map.Entry<BigDecimal, BigDecimal> floorEntry = priceRange.floorEntry(adjustedWeight);
             if (null == ceilingEntry || null == floorEntry) {
                 return null;
             } else {
@@ -99,9 +113,10 @@ public class OrderBill {
                 BigDecimal floorWeight = floorEntry.getKey();
                 BigDecimal price = floorPrice.add(
                         ceilingPrice.subtract(floorPrice)
-                                .divide(ceilingWeight.subtract(floorWeight), 2,
+                                .divide(ceilingWeight.subtract(floorWeight),
+                                        2,
                                         BigDecimal.ROUND_HALF_UP)
-                                .multiply(weight.subtract(floorWeight))
+                                .multiply(adjustedWeight.subtract(floorWeight))
                 );
                 return price;
             }
