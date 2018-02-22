@@ -5,6 +5,7 @@ import cc.akkaha.egg.controllers.model.QueryUserOrder;
 import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
+import cc.akkaha.egg.db.service.OrderItemService;
 import cc.akkaha.egg.db.service.UserOrderService;
 import cc.akkaha.egg.model.ApiRes;
 import cc.akkaha.egg.model.OrderBill;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/egg/user-order")
@@ -29,25 +31,46 @@ public class UserOrderController {
     private UserOrderService userOrderService;
     @Autowired
     private BillService billService;
+    @Autowired
+    private OrderItemService orderItemService;
 
     @PostMapping("/query")
     public Object query(@RequestBody QueryUserOrder query) {
         ApiRes res = new ApiRes();
-        Wrapper wrapper = new EntityWrapper<UserOrder>();
+        HashMap<String, Object> data = new HashMap<>();
+        res.setData(data);
+        Wrapper userOrderWrapper = new EntityWrapper<UserOrder>();
         if (StringUtils.isNotEmpty(query.getSeller())) {
-            wrapper.eq(UserOrder.SELLER, query.getSeller());
+            userOrderWrapper.eq(UserOrder.SELLER, query.getSeller());
         }
         if (StringUtils.isNotEmpty(query.getPhone())) {
-            wrapper.eq(UserOrder.PHONE, query.getPhone());
+            userOrderWrapper.eq(UserOrder.PHONE, query.getPhone());
         }
         if (StringUtils.isNotEmpty(query.getStatus())) {
-            wrapper.eq(UserOrder.STATUS, query.getStatus());
+            userOrderWrapper.eq(UserOrder.STATUS, query.getStatus());
         }
         Page page = userOrderService.selectPage(new Page<UserOrder>(query.getCurrent(), query
                         .getSize(),
                         UserOrder.CREATED_AT, false),
-                wrapper);
-        res.setData(page);
+                userOrderWrapper);
+        data.put("list", page.getRecords());
+        data.put("total", page.getTotal());
+        EntityWrapper<OrderItem> orderItemWrapper = new EntityWrapper<>();
+        List<UserOrder> records = page.getRecords();
+        if (null != records && !records.isEmpty()) {
+            List<Integer> userOrderIds = records.stream().map(UserOrder::getId).collect(Collectors
+                    .toList());
+            orderItemWrapper
+                    .setSqlSelect(OrderItem.USER + ",count(" + OrderItem.WEIGHT + ") count")
+                    .in(OrderItem.USER, userOrderIds)
+                    .groupBy(OrderItem.USER);
+            HashMap<Object, Object> countMap = new HashMap<>();
+            orderItemService.selectMaps(orderItemWrapper).forEach(map -> {
+                countMap.put(map.get(OrderItem.USER), map.get("count"));
+            });
+            data.put("count", countMap);
+        }
+        res.setData(data);
         return res;
     }
 

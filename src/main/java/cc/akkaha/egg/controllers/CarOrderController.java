@@ -5,6 +5,7 @@ import cc.akkaha.egg.controllers.model.QueryCarOrder;
 import cc.akkaha.egg.db.model.CarOrder;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.service.CarOrderService;
+import cc.akkaha.egg.db.service.OrderItemService;
 import cc.akkaha.egg.model.ApiRes;
 import cc.akkaha.egg.model.OrderBill;
 import cc.akkaha.egg.service.BillService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/egg/car-order")
@@ -28,28 +30,49 @@ public class CarOrderController {
     private CarOrderService carOrderService;
     @Autowired
     private BillService billService;
+    @Autowired
+    private OrderItemService orderItemService;
 
     @PostMapping("/query")
     public Object query(@RequestBody QueryCarOrder query) {
         ApiRes res = new ApiRes();
-        Wrapper wrapper = new EntityWrapper<CarOrder>();
+        HashMap<String, Object> data = new HashMap<>();
+        res.setData(data);
+        Wrapper carOrderWrapper = new EntityWrapper<CarOrder>();
         if (StringUtils.isNotEmpty(query.getSerial())) {
-            wrapper.eq(CarOrder.SERIAL, query.getSerial());
+            carOrderWrapper.eq(CarOrder.SERIAL, query.getSerial());
         }
         if (StringUtils.isNotEmpty(query.getDriver())) {
-            wrapper.eq(CarOrder.DRIVER, query.getDriver());
+            carOrderWrapper.eq(CarOrder.DRIVER, query.getDriver());
         }
         if (StringUtils.isNotEmpty(query.getDriverPhone())) {
-            wrapper.eq(CarOrder.DRIVER_PHONE, query.getDriverPhone());
+            carOrderWrapper.eq(CarOrder.DRIVER_PHONE, query.getDriverPhone());
         }
         if (StringUtils.isNotEmpty(query.getStatus())) {
-            wrapper.eq(CarOrder.STATUS, query.getStatus());
+            carOrderWrapper.eq(CarOrder.STATUS, query.getStatus());
         }
         Page page = carOrderService.selectPage(new Page<CarOrder>(query.getCurrent(),
                         query.getSize(),
                         CarOrder.CREATED_AT, false),
-                wrapper);
-        res.setData(page);
+                carOrderWrapper);
+        data.put("list", page.getRecords());
+        data.put("total", page.getTotal());
+        EntityWrapper<OrderItem> orderItemWrapper = new EntityWrapper<>();
+        List<CarOrder> records = page.getRecords();
+        if (null != records && !records.isEmpty()) {
+            List<Integer> carOrderIds = records.stream()
+                    .map(CarOrder::getId)
+                    .collect(Collectors.toList());
+            orderItemWrapper
+                    .setSqlSelect(OrderItem.CAR + ",count(" + OrderItem.WEIGHT + ") count")
+                    .in(OrderItem.CAR, carOrderIds)
+                    .groupBy(OrderItem.CAR);
+            HashMap<Object, Object> countMap = new HashMap<>();
+            orderItemService.selectMaps(orderItemWrapper).forEach(map -> {
+                countMap.put(map.get(OrderItem.CAR), map.get("count"));
+            });
+            data.put("count", countMap);
+        }
         return res;
     }
 
