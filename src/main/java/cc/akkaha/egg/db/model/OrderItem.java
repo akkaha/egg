@@ -1,12 +1,16 @@
 package cc.akkaha.egg.db.model;
 
+import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
+
 import java.math.BigDecimal;
 import java.util.Date;
+
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+
 import java.io.Serializable;
 
 @TableName("egg_order_item")
@@ -17,7 +21,7 @@ public class OrderItem extends Model<OrderItem> {
     /**
      * 自增主键
      */
-    @TableId(value="id", type= IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     /**
      * 重量,单位斤
@@ -30,6 +34,7 @@ public class OrderItem extends Model<OrderItem> {
     /**
      * 车次外键
      */
+    @TableField(strategy = FieldStrategy.IGNORED)
     private Integer car;
     /**
      * 创建时间

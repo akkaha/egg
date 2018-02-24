@@ -1,11 +1,14 @@
 package cc.akkaha.egg.controllers;
 
+import cc.akkaha.egg.controllers.model.BatchUpdateItemCar;
 import cc.akkaha.egg.controllers.model.NewOrderItem;
 import cc.akkaha.egg.controllers.model.QueryOrderItem;
 import cc.akkaha.egg.db.model.OrderItem;
 import cc.akkaha.egg.db.model.UserOrder;
 import cc.akkaha.egg.db.service.OrderItemService;
+import cc.akkaha.egg.model.ApiCode;
 import cc.akkaha.egg.model.ApiRes;
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -16,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/egg/order-item")
@@ -73,17 +76,33 @@ public class OrderItemController {
     @PostMapping("/update")
     public Object update(@RequestBody OrderItem item) {
         ApiRes res = new ApiRes();
-        // ugly but lazy, no easy function
-        OrderItem dbItem = item.selectById();
-        dbItem.setUser(item.getUser());
-        dbItem.setWeight(item.getWeight());
-        dbItem.setCar(item.getCar());
-        dbItem.setUpdatedAt(new Date());
-        boolean ret = dbItem.updateAllColumnById();
+        boolean ret = item.updateById();
         if (ret) {
-            res.setData(dbItem);
+            res.setData(item);
         } else {
             res.setMsg("更新失败!");
+        }
+        return res;
+    }
+
+    @PostMapping("/batch-update-car")
+    public Object batchUpdateCarByUser(@RequestBody BatchUpdateItemCar update) {
+        ApiRes res = new ApiRes();
+        List<Integer> ids = update.getIds();
+        if (null != ids && !ids.isEmpty()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setCar(update.getCar());
+            Condition condition = Condition.create();
+            if (update.getIsByUser()) {
+                condition.setSqlSelect(OrderItem.CAR).in(OrderItem.USER, ids);
+            } else {
+                condition.setSqlSelect(OrderItem.CAR).in(OrderItem.ID, ids);
+            }
+            boolean ret = itemService.update(orderItem, condition);
+            if (!ret) {
+                res.setCode(ApiCode.ERROR);
+                res.setMsg("操作失败");
+            }
         }
         return res;
     }
