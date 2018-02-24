@@ -20,7 +20,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'cc.akkaha'
-version = '1.5.0'
+version = '1.6.0'
 sourceCompatibility = 1.8
 
 repositories {
