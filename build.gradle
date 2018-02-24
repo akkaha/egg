@@ -3,6 +3,8 @@ buildscript {
         springBootVersion = '2.0.0.RC1'
     }
     repositories {
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         mavenCentral()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
