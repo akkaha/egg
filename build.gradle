@@ -1,3 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'cc.akkaha'
+version = '1.6.0'
+sourceCompatibility = 1.8
+
 buildscript {
     ext {
         springBootVersion = '2.0.0.RC1'
@@ -13,15 +24,6 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group = 'cc.akkaha'
-version = '1.6.0'
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -49,4 +51,67 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
     testCompile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'egg'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'A simple SpringBoot2 demo project written for 🥚 trade in my village.'
+                url 'https://github.com/akkaha/egg'
+
+                scm {
+                    connection 'https://github.com/akkaha/egg.git'
+                    developerConnection 'https://github.com/akkaha/egg.git'
+                    url 'https://github.com/akkaha/egg'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'xcorpio'
+                        name 'zheng shaodong'
+                        email 'ngxcorpio@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
