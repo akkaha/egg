@@ -33,21 +33,23 @@ repositories {
 
 
 dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-logging')
     compile('org.springframework.boot:spring-boot-starter-aop')
     compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    
     compile group: 'com.baomidou', name: 'mybatisplus-spring-boot-starter', version: '1.0.5'
     compile group: 'com.baomidou', name: 'mybatis-plus', version: '2.1.9'
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-starter-data-rest')
-    compile('org.springframework.boot:spring-boot-starter-webflux')
-    compile('org.springframework.boot:spring-boot-starter-websocket')
-    // compile('org.springframework.data:spring-data-rest-hal-browser')
-    compile('org.springframework.session:spring-session-core')
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
     runtime('org.springframework.boot:spring-boot-devtools')
     runtime('mysql:mysql-connector-java')
+
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
     compileOnly('org.projectlombok:lombok')
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
     testCompile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
